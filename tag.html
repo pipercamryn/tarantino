@@ -1,0 +1,769 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Cache-Control" content="no-store">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>tarantino</title>
+  <link rel="stylesheet" href="assets/default.css">
+  <link rel="shortcut icon" type="image/png" href="favicon.ico?v=1.0">
+  <script>
+
+  var colour="random"; // "random" can be replaced with any valid colour ie: "red"...
+  var sparkles=100;// increase of decrease for number of sparkles falling
+
+  var x=ox=400;
+  var y=oy=300;
+  var swide=800;
+  var shigh=600;
+  var sleft=sdown=0;
+  var tiny=new Array();
+  var star=new Array();
+  var starv=new Array();
+  var starx=new Array();
+  var stary=new Array();
+  var tinyx=new Array();
+  var tinyy=new Array();
+  var tinyv=new Array();
+
+  colours=new Array('#ff0000','#00ff00','#ffffff','#ff00ff','#ffa500','#ffff00','#00ff00','#ffffff','ff00ff')
+
+  n = 10;
+  y = 0;
+  x = 0;
+  n6=(document.getElementById&&!document.all);
+  ns=(document.layers);
+  ie=(document.all);
+  d=(ns||ie)?'document.':'document.getElementById("';
+  a=(ns||n6)?'':'all.';
+  n6r=(n6)?'")':'';
+  s=(ns)?'':'.style';
+
+  if (ns){
+  	for (i = 0; i < n; i++)
+  		document.write('<layer name="dots'+i+'" top=0 left=0 width='+i/2+' height='+i/2+' bgcolor=#ff0000></layer>');
+  }
+
+  if (ie)
+  	document.write('<div id="con" style="position:absolute;top:0px;left:0px"><div style="position:relative">');
+
+  if (ie||n6){
+  	for (i = 0; i < n; i++)
+  		document.write('<div id="dots'+i+'" style="position:absolute;top:0px;left:0px;width:'+i/2+'px;height:'+i/2+'px;background:#ff0000;font-size:'+i/2+'"></div>');
+  }
+
+  if (ie)
+  	document.write('</div></div>');
+  (ns||n6)?window.captureEvents(Event.MOUSEMOVE):0;
+
+  function Mouse(evnt){
+
+  	y = (ns||n6)?evnt.pageY+4 - window.pageYOffset:event.y+4;
+  	x = (ns||n6)?evnt.pageX+1:event.x+1;
+  }
+
+  (ns)?window.onMouseMove=Mouse:document.onmousemove=Mouse;
+
+  function animate(){
+
+  	o=(ns||n6)?window.pageYOffset:0;
+
+  	if (ie)con.style.top=document.body.scrollTop + 'px';
+
+  	for (i = 0; i < n; i++){
+
+  		var temp1 = eval(d+a+"dots"+i+n6r+s);
+
+  		randcolours = colours[Math.floor(Math.random()*colours.length)];
+
+  		(ns)?temp1.bgColor = randcolours:temp1.background = randcolours;
+
+  		if (i < n-1){
+
+  			var temp2 = eval(d+a+"dots"+(i+1)+n6r+s);
+  			temp1.top = parseInt(temp2.top) + 'px';
+  			temp1.left = parseInt(temp2.left) + 'px';
+
+  		}
+  		else{
+
+  			temp1.top = y+o + 'px';
+  			temp1.left = x + 'px';
+  		}
+  	}
+
+  	setTimeout("animate()",10);
+  }
+
+  animate();
+
+  window.onload=function() { if (document.getElementById) {
+  	var i, rats, rlef, rdow;
+  	for (var i=0; i<sparkles; i++) {
+  		var rats=createDiv(3, 3);
+  		rats.style.visibility="hidden";
+  		rats.style.zIndex="999";
+  		document.body.appendChild(tiny[i]=rats);
+  		starv[i]=0;
+  		tinyv[i]=0;
+  		var rats=createDiv(5, 5);
+  		rats.style.backgroundColor="transparent";
+  		rats.style.visibility="hidden";
+  		rats.style.zIndex="999";
+  		var rlef=createDiv(1, 5);
+  		var rdow=createDiv(5, 1);
+  		rats.appendChild(rlef);
+  		rats.appendChild(rdow);
+  		rlef.style.top="2px";
+  		rlef.style.left="0px";
+  		rdow.style.top="0px";
+  		rdow.style.left="2px";
+  		document.body.appendChild(star[i]=rats);
+  	}
+  	set_width();
+  	sparkle();
+  }}
+
+  function sparkle() {
+  	var c;
+  	if (Math.abs(x-ox)>1 || Math.abs(y-oy)>1) {
+  		ox=x;
+  		oy=y;
+  		for (c=0; c<sparkles; c++) if (!starv[c]) {
+  			star[c].style.left=(starx[c]=x)+"px";
+  			star[c].style.top=(stary[c]=y+1)+"px";
+  			star[c].style.clip="rect(0px, 5px, 5px, 0px)";
+  			star[c].childNodes[0].style.backgroundColor=star[c].childNodes[1].style.backgroundColor=(colour=="random")?newColour():colour;
+  			star[c].style.visibility="visible";
+  			starv[c]=50;
+  			break;
+  		}
+  	}
+  	for (c=0; c<sparkles; c++) {
+  		if (starv[c]) update_star(c);
+  		if (tinyv[c]) update_tiny(c);
+  	}
+  	setTimeout("sparkle()", 40);
+  }
+
+  function update_star(i) {
+  	if (--starv[i]==25) star[i].style.clip="rect(1px, 4px, 4px, 1px)";
+  	if (starv[i]) {
+  		stary[i]+=1+Math.random()*3;
+  		starx[i]+=(i%5-2)/5;
+  		if (stary[i]<shigh+sdown) {
+  			star[i].style.top=stary[i]+"px";
+  			star[i].style.left=starx[i]+"px";
+  		}
+  		else {
+  			star[i].style.visibility="hidden";
+  			starv[i]=0;
+  			return;
+  		}
+  	}
+  	else {
+  		tinyv[i]=50;
+  		tiny[i].style.top=(tinyy[i]=stary[i])+"px";
+  		tiny[i].style.left=(tinyx[i]=starx[i])+"px";
+  		tiny[i].style.width="2px";
+  		tiny[i].style.height="2px";
+  		tiny[i].style.backgroundColor=star[i].childNodes[0].style.backgroundColor;
+  		star[i].style.visibility="hidden";
+  		tiny[i].style.visibility="visible"
+  	}
+  }
+
+  function update_tiny(i) {
+  	if (--tinyv[i]==25) {
+  		tiny[i].style.width="1px";
+  		tiny[i].style.height="1px";
+  	}
+  	if (tinyv[i]) {
+  		tinyy[i]+=1+Math.random()*3;
+  		tinyx[i]+=(i%5-2)/5;
+  		if (tinyy[i]<shigh+sdown) {
+  			tiny[i].style.top=tinyy[i]+"px";
+  			tiny[i].style.left=tinyx[i]+"px";
+  		}
+  		else {
+  			tiny[i].style.visibility="hidden";
+  			tinyv[i]=0;
+  			return;
+  		}
+  	}
+  	else tiny[i].style.visibility="hidden";
+  }
+
+  document.onmousemove=mouse;
+  function mouse(e) {
+  	if (e) {
+  		y=e.pageY;
+  		x=e.pageX;
+  	}
+  	else {
+  		set_scroll();
+  		y=event.y+sdown;
+  		x=event.x+sleft;
+  	}
+  }
+
+  window.onscroll=set_scroll;
+  function set_scroll() {
+  	if (typeof(self.pageYOffset)=='number') {
+  		sdown=self.pageYOffset;
+  		sleft=self.pageXOffset;
+  	}
+  	else if (document.body && (document.body.scrollTop || document.body.scrollLeft)) {
+  		sdown=document.body.scrollTop;
+  		sleft=document.body.scrollLeft;
+  	}
+  	else if (document.documentElement && (document.documentElement.scrollTop || document.documentElement.scrollLeft)) {
+  		sleft=document.documentElement.scrollLeft;
+  		sdown=document.documentElement.scrollTop;
+  	}
+  	else {
+  		sdown=0;
+  		sleft=0;
+  	}
+  }
+
+  window.onresize=set_width;
+  function set_width() {
+  	var sw_min=999999;
+  	var sh_min=999999;
+  	if (document.documentElement && document.documentElement.clientWidth) {
+  		if (document.documentElement.clientWidth>0) sw_min=document.documentElement.clientWidth;
+  		if (document.documentElement.clientHeight>0) sh_min=document.documentElement.clientHeight;
+  	}
+  	if (typeof(self.innerWidth)=='number' && self.innerWidth) {
+  		if (self.innerWidth>0 && self.innerWidth<sw_min) sw_min=self.innerWidth;
+  		if (self.innerHeight>0 && self.innerHeight<sh_min) sh_min=self.innerHeight;
+  	}
+  	if (document.body.clientWidth) {
+  		if (document.body.clientWidth>0 && document.body.clientWidth<sw_min) sw_min=document.body.clientWidth;
+  		if (document.body.clientHeight>0 && document.body.clientHeight<sh_min) sh_min=document.body.clientHeight;
+  	}
+  	if (sw_min==999999 || sh_min==999999) {
+  		sw_min=800;
+  		sh_min=600;
+  	}
+  	swide=sw_min;
+  	shigh=sh_min;
+  }
+
+  function createDiv(height, width) {
+  	var div=document.createElement("div");
+  	div.style.position="absolute";
+  	div.style.height=height+"px";
+  	div.style.width=width+"px";
+  	div.style.overflow="hidden";
+  	return (div);
+  }
+
+  function newColour() {
+  	var c=new Array();
+  	c[0]=255;
+  	c[1]=Math.floor(Math.random()*256);
+  	c[2]=Math.floor(Math.random()*(256-c[1]/2));
+  	c.sort(function(){return (0.5 - Math.random());});
+  	return ("rgb("+c[0]+", "+c[1]+", "+c[2]+")");
+  }
+  // ]]>
+
+  function myFunctionone() {
+  // Get the checkbox
+  var checkBox = document.getElementById("checkone");
+  // Get the output text
+  var text = document.getElementById("textone");
+
+  // If the checkbox is checked, display the output text
+  if (checkBox.checked == true){
+    text.style.display = "block";
+  } else {
+    text.style.display = "none";
+  }
+}
+function myFunctiontwo() {
+// Get the checkbox
+var checkBox = document.getElementById("checktwo");
+// Get the output text
+var text = document.getElementById("texttwo");
+
+// If the checkbox is checked, display the output text
+if (checkBox.checked == true){
+  text.style.display = "block";
+} else {
+  text.style.display = "none";
+  }
+}
+function myFunctionthree() {
+// Get the checkbox
+var checkBox = document.getElementById("checkthree");
+// Get the output text
+var text = document.getElementById("textthree");
+
+// If the checkbox is checked, display the output text
+if (checkBox.checked == true){
+  text.style.display = "block";
+} else {
+  text.style.display = "none";
+  }
+}
+function myFunctionfour() {
+// Get the checkbox
+var checkBox = document.getElementById("checkfour");
+// Get the output text
+var text = document.getElementById("textfour");
+
+// If the checkbox is checked, display the output text
+if (checkBox.checked == true){
+  text.style.display = "block";
+} else {
+  text.style.display = "none";
+  }
+}
+function myFunctionfive() {
+// Get the checkbox
+var checkBox = document.getElementById("checkfive");
+// Get the output text
+var text = document.getElementById("textfive");
+
+// If the checkbox is checked, display the output text
+if (checkBox.checked == true){
+  text.style.display = "block";
+} else {
+  text.style.display = "none";
+}
+}
+function myFunctionsix() {
+// Get the checkbox
+var checkBox = document.getElementById("checksix");
+// Get the output text
+var text = document.getElementById("textsix");
+
+// If the checkbox is checked, display the output text
+if (checkBox.checked == true){
+  text.style.display = "block";
+} else {
+  text.style.display = "none";
+}
+}
+
+function myFunctionseven() {
+// Get the checkbox
+var checkBox = document.getElementById("checkseven");
+// Get the output text
+var text = document.getElementById("textseven");
+
+// If the checkbox is checked, display the output text
+if (checkBox.checked == true){
+  text.style.display = "block";
+} else {
+  text.style.display = "none";
+}
+}
+
+
+
+
+
+</script>
+</head>
+
+<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sparkle Trail and Dust Cursor</title>
+    <meta name="description" content="Your Description Here">
+
+
+<script type="text/javascript" src="js/jquery.1.11.1.js"></script>
+
+<body class="tag-body">
+
+<div class="all-checkbox">
+
+  <div class="first-checkbox">
+    death proof: <input type="checkbox" id="checkone" onclick="myFunctionone()">
+  </div>
+
+  <div class="second-checkbox">
+    inglourious basterds: <input type="checkbox" id="checktwo" onclick="myFunctiontwo()">
+ </div>
+
+ <div class="third-checkbox">
+   reservoir dogs: <input type="checkbox" id="checkthree" onclick="myFunctionthree()">
+ </div>
+
+ <div class="fourth-checkbox">
+   pulp fiction: <input type="checkbox" id="checkfour" onclick="myFunctionfour()">
+ </div>
+
+ <div class="fith-checkbox">
+   once upon a time...in hollywood: <input type="checkbox" id="checkfive" onclick="myFunctionfive()">
+ </div>
+
+ <div class="sixth-checkbox">
+   the hateful eight: <input type="checkbox" id="checksix" onclick="myFunctionsix()">
+ </div>
+
+ <div class="seventh-checkbox">
+   kill bill: <input type="checkbox" id="checkseven" onclick="myFunctionseven()">
+ </div>
+
+
+</div>
+
+
+<div class="deathproof-one"> <p id="textone" style="display:none">
+
+  <span style="color:black;font-family:snellroundhand;font-size:40px;">
+    <marquee behavior="scroll"scrollamount="3" direction="right">death proof
+    </marquee></span
+
+  <span style="text-decoration:underline">declared 2007’s
+  “death proof” the worst movie he’s ever made.”</span>
+
+  <span style="font-style:italic"> mike, a hollywood stuntman,
+  kills women and makes it look like a car accident. his plan works for several
+  years until he meets a group of girls who are all set to fight back. two
+  separate sets of voluptuous women are stalked at different times by a scarred
+  stuntman who uses his "death proof" cars to execute his murderous plans. </span>
+
+  <span style="color:black"><span style="font-style:italic">"get ready to fly bitch"</span>
+
+   tarantino’s not saying <img src="./assets/images/deathproof.jpg"align="middle"style="width:45px;"alt="">
+   is bad, just that he likes it the least of all the movies he’s made.
+   “death proof”s whole scenario is recycled from stock horror and thriller
+   materials, but it’s also littered with Tarantino’s personal touches.
+   stuntman mike seems to select his victims by looking for women who stick
+   their bare feet
+
+   <img src="./assets/images/deathproof3.gif"align="middle"style="width:70px;"alt="">
+   out their car windows. In fact, most of the first half of the film right up
+   until the big car crash feels like some kind of distilled tarantino fantasy
+   of the perfect night out.</span>
+
+   <span style="text-decoration:underline;color:pink;">an
+     old question has arisen again: what’s up with tarantino and feet?
+     death proof took it a bit further with jungle julia’s leg being
+     chopped and flying out of the car, and with mike mcKay later on
+     touching and licking abethany ross’ feet. tarantino has a foot fetish
+     and is not shy about it. </span>
+
+     <img src="./assets/images/footfetish.gif"align="middle"style="width:85px;" class="thumbnail"alt="">
+
+     <span style="color:red;font-family:courier;font-size:10px" class="thumbnail">
+       <br>the car is driving fast down the road. a pair of female bare feet with a gold ankle bracelet lie
+      propped up on the dashboard emanating from the passenger seat.~ good god
+      almighty rockabilly tune beats out of the car stereo, the feet tap to the beat.
+      the opening credits play out over this image, as the music continues.</span>
+
+      imdb 7/10</p>
+ </div>
+
+ <div class="inglourious-one"> <p id="texttwo" style="display:none">
+
+   <span style="color:black;font-family:snellroundhand;font-size:40px;">
+     <marquee behavior="scroll"scrollamount="3" direction="right">inglourious
+       basterds</marquee></span
+
+   <span style="font-style:italic;">a few jewish soldiers are on an
+     undercover mission to bring down the nazi government and put an end to
+     the war. meanwhile, a woman wants to avenge the
+   death of her family from a german officer. </span>
+
+   <span style="font-family:snellroundhand;font-size:30px;color:black;">“i’m
+     going to give you something you can’t take off.”</span>
+
+     <span style="text-decoration:underline;"> bizarre, bold, and bloody,
+       there's no denying that
+       <img src="./assets/images/inglouriouslogo.png"align="middle"style="width:80px;">
+       has all the vim, vigor, and excitement of quentin tarantino's other films. </span>
+
+       <span style="color:black;">a young woman’s face appears on a movie screen, gigantic in close-up and
+       starkly black and white, interrupting a nazi propaganda movie. in a paris
+       theatre, where hitler and other nazi officials are attending the german
+       film’s premiere, the haunting screen image of shosanna dreyfus tells them,
+       “you are all going to die.” she has set a fire that will kill them, unaware
+       that her plot overlaps with a US-and-british military operation to blow up
+       the theatre. </span>
+
+       <span style="color:mediumspringgreen;font-style:italic;">“inglourious basterds
+         set off a new pattern in tarantino’s career: rewriting the past.”</span>
+
+       <span style="color:hotpink;font-style:italic;">“the film contains one of
+         the most realistic, suspenseful sequences tarantino has ever created.”</span>
+
+       <span style="color:blue;font-style:italic;">“inglourious basterds does
+         not ask us to deny reality. it uses cinema to expand our imaginations.”</span>
+
+        <br><img src="./assets/images/inglourious2.gif"align="middle"style="width:80px;">
+
+       <span style="color:black;">shosanna dreyfus, female, french.</span>
+
+        <span style="color:black;font-style:italic;">“my name is shosanna
+            dreyfus and this is the face... of jewish vengeance!”</span>
+
+        <br><br><img src="./assets/images/inglourious.gif"align="middle"style="width:80px;" alt="">
+
+        <span style="color:black;">hans landa, male, nazi germany.</span>
+
+          <span style="color:black;font-style:italic;">“i love my unofficial title,
+            precisely because i have earned it.”</span>
+
+            <br><span style="color:red;font-family:courier;font-size:10px;">we hear
+              the sound of the german musical’s climax. the lights go up
+            in the auditorium. shosanna, dressed in a nurse’s uniform she swiped
+            from somewhere, remains seated, as the rest of the patrons gather
+            their coats and file out.</span>
+
+            <span style="color:black;">in nazi-occupied france during world war
+              II, a plan to assassinate nazi leaders by a group of jewish US
+              soldiers coincides with a theatre owner's vengeful plans for the
+              same.</span>
+
+              imdb 8.3/10</p>
+            </div>
+
+        <div class="reservoir-one"> <p id="textthree" style="display:none">
+
+          <span style="color:black;font-family:snellroundhand;font-size:40px;">
+            <marquee behavior="scroll"scrollamount="3" direction="right">reservoir dogs</marquee>
+          </span>
+
+          <span style="text-decoration:underline;">pulp fiction & reservoir dogs are connected. reservoir dogs and pulp
+          fiction are also connected by two other characters, though this one
+          is not as obvious or widely-known as the vega brothers, mr. white
+          larry dimmick and jimmie dimmick. </span>
+
+          <br><br><br><span style="color:lime;font-family:impact;font-size:30px;">“i wrote reservoir dogs out of frustration.”</span>
+
+          <span style="font-style:italic;color:black;">six criminals, hired to steal diamonds, do not know each other's true
+          identity. while attempting the heist, the police ambushes them,
+          leading them to believe that one of them is an undercover officer.</span>
+
+          <img src="./assets/images/reservoirdogs.gif"align="middle"style="width:80px;">
+
+          <br><br><br><span style="color:lime;font-family:impact;font-size:30px;">“saying you don’t like violence in movies is like saying you <br>don’t
+          like tap-dancing sequences in movies.”</span>
+
+          <span style="color:black;>"<br> nothing around <img src="./assets/images/reservoirdogslogo.png"align="middle"style="width:80px;">
+
+          though, has aged quite as badly as its original reviews. the only
+          thing mr. tarantino spells out is the violence. this movie isn’t really
+          about anything, it’s just a flashy, stylistically daring exercise in cinematic mayhem.
+          these are the two canards that everyone seemed to agree upon, and they were the stances
+          on which the tarantino-bashing industry would be based. one, that his work was ultraviolent,
+          and two, that it was about nothing more than its own movieishness, with no connection
+          to the real world. </span>
+
+          <span style="color:hotpink;">writer-director quentin tarantino and cinematographer andrzej sekula
+          detail their approach to shooting what would become a classic crime tale. </span>
+
+        <br><br> <span style="color:lime;font-family:impact;font-size:30px;">“i just wasn’t as good as i thought i was going to be, and i more or
+          less decided to look at the project as a learning experience,” </span>
+
+          <br><img src="./assets/images/reservoirdogs2.gif"align="middle"style="width:80px;">
+
+          <br><span style="color:black;">both tarantino and sekula offered enthusiastic
+            assessments of their future together. </span>
+
+            imbd 8.3/10</p>
+      </div>
+
+      <div class="pulpfiction-one"> <p id="textfour" style="display:none">
+
+        <span style="color:black;font-family:snellroundhand;font-size:40px;">
+          <marquee behavior="scroll"scrollamount="3" direction="right">pulp fiction</marquee>
+        </span>
+
+         <span style="font-style:italic;">the lives of two mob hitmen, a boxer, a gangster and his wife,
+          and a pair of diner bandits intertwine in four tales of violence
+          and redemption. in the realm of underworld, a series of incidents
+          intertwines the lives of two Los Angeles mobsters, a gangster's wife,
+          a boxer and two small-time criminals.</span>
+
+          <span style="color:black;font-style:italic;">quentin tarantino is the jerry lee Lewis of cinema, a
+          pounding performer who doesn't care if he tears up the piano, as long
+          as everybody is rocking. his new movie
+
+          <img src="./assets/images/pulpfictionlogo.jpg"align="middle"style="width:80px;">
+
+
+          is a comedy about blood, guts, violence, strange sex, drugs, fixed
+          fights, dead body disposal, leather freaks, and a wristwatch that
+          makes a dark journey down through the generations. </span>
+
+
+
+          <span style="color:lightgreen;font-decoration:underline;font-style:italic;">it is tarantino's strategy in all of his films to have the characters
+          speak at right angles to the action, or depart on flights of fancy.
+          remember the famous opening conversation between jules and vincent,
+          who are on their way to a violent reprisal against some college kids
+          who have offended wallace and appropriated his famous briefcase.
+
+          <img src="./assets/images/pulpfiction2.gif"align="middle"style="width:80px;">
+
+          they talk about the drug laws in Amsterdam, what Quarter Pounders are
+          called in paris, and the degree of sexual intimacy implied by a foot
+          massage. finally Jules says "let's get in character, and they enter
+          an apartment.</span>
+
+          <span style="color:black;font-family:snellroundhand;font-size:30px;">
+            “english motherfucker, do you speak it?”</span>
+
+            <br><img src="./assets/images/pulpfiction.gif"align="middle"style="width:150px;">
+
+            <br><br><span style="text-decoration:underline;color:black;">brilliantly written and unfathomably cool, this would make a
+            good case for most quotable crime movie of all time.</span>
+
+            imdb 8.9/10</p>
+      </div>
+
+      <div class="ouatih-one"> <p id="textfive" style="display:none">
+
+      <span style="color:black;font-family:snellroundhand;font-size:40px;">
+        <marquee behavior="scroll"scrollamount="3" direction="right">one upon a time in hollywood</marquee>
+      </span>
+
+
+      a faded television actor and his stunt double strive to achieve fame and
+      success in the final years of hollywood's golden age in 1969 los angeles.
+      rick, a washed-out actor, and cliff, his stunt double, struggle to
+      recapture fame and success in 1960s los angeles. meanwhile, living next
+      door to Rick is sharon tate and her husband roman polanski.
+
+      <br><img src="./assets/images/sharon.gif"align="middle"style="width:150px;">
+      <img src="./assets/images/sharon2.gif"align="middle"style="width:140px;">
+      <img src="./assets/images/sharon3.gif"align="middle"style="width:150px;">
+      <img src="./assets/images/sharon4.gif"align="middle"style="width:110px;">
+
+      <br><span style="color:black;font-style:italic">it’s hardly surprising that this, perhaps the most “tarantino-esque” of
+      all quentin tarantino’s movies to date, is a love letter to hollywood. who
+      has been more vocal about his passion for the movies, in all their glorious
+      (and inglourious) variety, than tarantino? and who has been more promiscuous
+      with his affections, flirting with everything from grindhouse and exploitation
+      flicks to martial arts, westerns and second world war adventures? </span>
+
+      <br><br><img src="./assets/images/ouatih.png"align="middle"style="width:200px;">
+
+      <br><span style="color:red;font-family:courier;font-size:10px;">quentin tarantino has been burnt by his script being stolen and published before,
+      now, he's taking extreme precaution...</span>
+
+
+
+      <br><span style="color:black;font-family:impact;font-size:25;">“hey your rick fucling dalton.
+        don't you forget it!”</span>
+
+        <img src="./assets/images/ouatih2.gif"align="middle"style="width:80px;">
+
+        <br>imdb 7.6/10</p>
+      </div>
+
+      <div class="thehateful-one"> <p id="textsix" style="display:none">
+        <span style="color:black;">for a simple premise and multi-layered characters, tarantino's
+        expert style and execution makes his eighth film an enjoyable experience.
+
+        <img src="./assets/images/hatefullogo.png"align="middle"style="width:95px;">
+
+
+         is a hilarious, suspenseful, bloody and masterful epic.
+        It might also just be the year's best film. </span>
+
+        <span style="font-style:italic;">in the dead of a wyoming winter, a bounty hunter and his prisoner
+        find shelter in a cabin currently inhabited by a collection of nefarious
+        characters. </span>
+        <br><br>
+        <span style="color:blue;font-style:italic;">a bounty hunter and his captured fugitive are caught in the middle of a
+        snowstorm. they seek refuge at a small lodge and encounter a twisted turn
+        of events there.</span>
+
+        <img src="./assets/images/thehatefuleight.gif"align="middle"style="width:100px;">
+
+        <span style="text-decoration:underline;color:black;">the hateful eight is a story about putting your differences aside to
+        do the right thing. in this case, "the right thing" was a form of grim,
+        western justice.</span>
+
+        <img src="./assets/images/thehatefuleight2.gif"align="middle"style="width:100px;">
+
+        <span style="font-family:impact;color:red;font-size:30px">it's tarantino's eighth movie and his worst by a widescreen, a boring,
+        self-indulgent mess that squanders a big chunk of the goodwill he's built
+        up with cinephiles by shooting on film and supporting independent theaters.</span>
+
+        <br><span style="color:dodgerblue;">quentin tarantino's ultraviolent, ultra-talky sorta-Western
+
+          <img src="./assets/images/hatefullogo.png"align="middle"style="width:95px;">
+ is an
+        impressive display of film craft and a profoundly ugly movie, so gleeful in
+        its violence and so nihilistic in its world view that it feels as though the
+        director is daring his detractors to see it as a confirmation of their worst fears. </span>
+
+        imdb 7.8/10
+  </p>
+  </div>
+
+  <div class="killbill-one"> <p id="textseven" style="display:none">
+
+    <span style="color:black;font-family:snellroundhand;font-size:40px;">
+      <marquee behavior="scroll"scrollamount="3" direction="right">kill bill</marquee>
+    </span>
+
+    <span style="font-style:italic">after awakening from a four-year coma, a former assassin wreaks vengeance
+    on the team of assassins who betrayed her.</span>
+
+    <img src="./assets/images/killbill.gif"align="middle"style="width:95px;">
+
+    <span style="color:black;text-decoration:underline">a former assassin, known simply as the bride, wakes from a coma four years after her
+    jealous ex-lover bill attempts to murder her on her wedding day.
+    fueled by an insatiable desire for revenge, she vows to get even with
+    every person who contributed to the loss of her unborn child, her entire
+    wedding party, and four years of her life. After devising a hit list,
+    the bride sets off on her quest, enduring unspeakable injury and unscrupulous enemies.</span>
+
+    with the recent revelations surrounding thurman’s experience filming
+
+    <img src="./assets/images/killbilllogo.png"align="middle"style="width:70px;">
+
+
+     <span style="font-style:italic;color:red;">from the car accident tarantino forced her to film that left her with
+     lasting injuries, to her accounts of the director spitting on her and
+     choking her in place of actors during certain scenes. the two-part movie’s
+     legacy takes on a different cast. But even as some viewers repelled by
+these stories are inclined to turn on Tarantino, they should think twice before turning on</span>
+<img src="./assets/images/killbilllogo.png"align="middle"style="width:70px;">
+
+<img src="./assets/images/killbill2.gif"align="middle"style="width:95px;">
+
+ <br><span style="font-family:snellroundhand;color:black;font-size:30px;">“revenge is a dish best served cold.”</span>
+
+ <br><span style="font-family:impact;color:dodgerblue;font-size:33px;">“before this
+   tale of bloody revenge reaches its climax, i'm going to ask you some questions.” ...</span>
+
+  <span style="color:pink;"> ok, if you are a fan of tarintino, then this is your film.
+   if you are looking for family film bull crap, go see something else.
+   this is a hard core action film... </span>
+
+   imdb 8.1/10
+
+
+
+
+
+
+
+
+
+
+  </p>
+</div>
+
+
+
+
+
+
+
+
+
+</body>
+</html>
